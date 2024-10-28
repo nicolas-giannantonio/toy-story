@@ -22,7 +22,7 @@ export default class Time extends EventEmitter {
         this.trigger('tick')
 
         window.requestAnimationFrame(() => {
-            this.tick()
+            this.tick(this.delta)
         })
     }
 
