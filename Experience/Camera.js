@@ -42,8 +42,7 @@ export default class Camera
 
         // Items
         this.angle.items = {
-            default: new THREE.Vector3(1.135, - 1.45, 1.15),
-            projects: new THREE.Vector3(0.38, - 1.4, 1.63)
+            default: new THREE.Vector3(0, 0, 1),
         }
 
         // Value
@@ -78,7 +77,7 @@ export default class Camera
             .1,
             80
         )
-        this.instance.up.set(0, 0, 1)
+        this.instance.up.set(0, 0, 0)
         this.instance.position.copy(this.angle.value)
         this.instance.lookAt(new THREE.Vector3())
         this.container.add(this.instance)

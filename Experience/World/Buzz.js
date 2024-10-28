@@ -36,16 +36,16 @@ export default class Buzz {
             // const accelerationX = Math.min(Math.max(this.movement.acceleration.x, - max), max)
             // const accelerationY = Math.min(Math.max(this.movement.acceleration.y, - max), max)
             this.model.position.y += this.controls.actions.up ? .1 : 0
-            this.model.position.x -= this.controls.actions.down ? .1 : 0
+            this.model.position.y -= this.controls.actions.down ? .1 : 0
         })
     }
 
     setBuzzPosition() {
         this.container.position.copy(this.position);
         this.container.add(this.model)
-        console.log(this.model)
+
         this.model.rotation.set(0, 0, 0)
-        this.model.position.set(0, this.model.scale.y, 0)
+        this.model.position.set(0, 0, 0)
     }
 
     setModel() {
