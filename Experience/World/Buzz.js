@@ -1,27 +1,8 @@
 import * as THREE from 'three'
 
-export default class Buzz {
-    constructor(_options) {
-        this.container = new THREE.Object3D()
-        this.rotation = new THREE.Vector3()
-
-        this.ressources = _options.ressources
-        this.time = _options.time
-        this.camera = _options.camera
-        this.renderer = _options.renderer
-        this.controls = _options.controls
-        this.debug = _options.debug
-
-        if(this.debug)
-        {
-            this.debugFolder = this.debug.addFolder('buzz')
-            this.debugFolder.open()
-        }
-    }
-}
-
-
 export class BuzzControler {
+    isColide = false
+
     constructor(_options) {
         this.controls = _options.controls
         this.ressources = _options.ressources
@@ -37,15 +18,18 @@ export class BuzzControler {
         this._position = new THREE.Vector3();
 
         this._animations = {};
-        // this._target = this.ressources.items.buzz.scene.children[0]
-        this._target = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.MeshBasicMaterial({color: 0xff0000})
-        )
+        this._target = this.ressources.items.buzz.scene.children[0]
+        this._target.scale.setScalar(30);
 
-        this._target.scale.set(5, 10, 5);
-        this._target.position.set(0, 5, 0);
+        this.targetBox = new THREE.Box3().setFromObject(this._target)
+        this.targetBox.expandByVector(new THREE.Vector3(1, 8, 0))
+        this.targetBox.translate(new THREE.Vector3(-1.15, 0, 0))
+
+        const helper = new THREE.Box3Helper( this.targetBox, 0xffff00 );
+        this.scene.add( helper );
+
         this._animations = this.ressources.items.buzz.animations
+        this.player = new THREE.AnimationMixer(this._target)
 
         this.scene.add(this._target)
     }
@@ -82,12 +66,13 @@ export class BuzzControler {
         const acc = this._acceleration.clone();
 
         if (this.controls.actions.up) {
-            console.log('Forward')
-            velocity.z += acc.z * timeInSeconds;
+            velocity.z += acc.z * timeInSeconds * (this.controls.actions.boost ? 5 : 1);
         }
+
         if (this.controls.actions.down) {
-            velocity.z -= acc.z * timeInSeconds;
+            velocity.z -= acc.z * timeInSeconds
         }
+
         if (this.controls.actions.left) {
             _A.set(0, 1, 0);
             _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this._acceleration.y);
@@ -115,9 +100,23 @@ export class BuzzControler {
         sideways.multiplyScalar(velocity.x * timeInSeconds);
         forward.multiplyScalar(velocity.z * timeInSeconds);
 
+
         controlObject.position.add(forward);
         controlObject.position.add(sideways);
 
+
         this._position.copy(controlObject.position);
+
+        if (this.player) {
+            const action = this.controls.actions.up || this.controls.actions.down ? this._animations[5] : this._animations[1];
+            const currentAction = this.player.existingAction(action);
+
+            if (!currentAction || !currentAction.isRunning()) {
+                this.player.stopAllAction();
+                this.player.clipAction(action).play();
+            }
+
+            this.player.update(timeInSeconds);
+        }
     }
 }

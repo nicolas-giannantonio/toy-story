@@ -15,8 +15,10 @@ export default class Floor
 
 
     setModel() {
-        this.model = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshBasicMaterial({color: "lightgray"}))
+        this.model = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshBasicMaterial({color: "darkgrey"}))
         this.model.rotation.set(-Math.PI / 2, 0, 0)
+        this.model.castShadow = false
+        this.model.receiveShadow = true
         this.container.add(this.model)
     }
 

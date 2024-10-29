@@ -87,8 +87,6 @@ class ThirdPersonCamera {
 
         this._currentPosition = new THREE.Vector3();
         this._currentLookat = new THREE.Vector3();
-
-
     }
 
     _CalculateIdealOffset() {

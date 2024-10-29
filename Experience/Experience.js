@@ -7,15 +7,21 @@ import Camera from "./Camera.js";
 import World from "./World/World.js";
 import Resources from "./Ressources.js";
 import Controls from './World/Controls.js'
+import Player from "./Player.js";
 
 export default class Experience
 {
     constructor(canvas) {
         this.canvas = canvas;
 
+
         this.sizes = new Sizes()
         this.time = new Time()
         this.resources = new Resources()
+
+        this.player = new Player({
+            time: this.time
+        })
 
         this.resources.on("ready", () => {
             this.start();
@@ -55,10 +61,12 @@ export default class Experience
             alpha: true,
             powerPreference: 'high-performance'
         })
-        this.renderer.setClearColor("white", 1)
+        this.renderer.setClearColor("black", 1)
         this.renderer.setPixelRatio(2)
         this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
         this.renderer.autoClear = true
+        this.renderer.shadowMap.enabled = true
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
         this.sizes.on('resize', () =>
         {
@@ -101,7 +109,8 @@ export default class Experience
             debug: this.debug,
             time: this.time,
             sizes: this.sizes,
-            controls: this.controls
+            controls: this.controls,
+            player: this.player
         })
 
         this.scene.add(this.world.container)
