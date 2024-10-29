@@ -2,15 +2,9 @@ import EventEmitter from '../Utils/EventEmitter'
 
 export default class Controls extends EventEmitter
 {
-    constructor(_options)
+    constructor()
     {
         super()
-
-        this.config = _options.config
-        this.sizes = _options.sizes
-        this.time = _options.time
-        this.camera = _options.camera
-        // this.sounds = _options.sounds
 
         this.setActions()
         this.setKeyboard()
@@ -51,7 +45,6 @@ export default class Controls extends EventEmitter
             {
                 case 'ArrowUp':
                 case 'KeyW':
-                    this.camera.pan.reset()
                     this.actions.up = true
                     break
 
@@ -62,7 +55,6 @@ export default class Controls extends EventEmitter
 
                 case 'ArrowDown':
                 case 'KeyS':
-                    this.camera.pan.reset()
                     this.actions.down = true
                     break
 
@@ -82,9 +74,9 @@ export default class Controls extends EventEmitter
                     this.actions.boost = true
                     break
 
-                // case ' ':
-                //     this.jump(true)
-                //     break
+                case ' ':
+                    this.jump(true)
+                    break
             }
         }
 
@@ -131,5 +123,9 @@ export default class Controls extends EventEmitter
 
         document.addEventListener('keydown', this.keyboard.events.keyDown)
         document.addEventListener('keyup', this.keyboard.events.keyUp)
+    }
+
+    jump(_value) {
+        console.log('jump', _value)
     }
 }

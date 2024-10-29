@@ -6,6 +6,7 @@ import Time from "./Utils/Time.js";
 import Camera from "./Camera.js";
 import World from "./World/World.js";
 import Resources from "./Ressources.js";
+import Controls from './World/Controls.js'
 
 export default class Experience
 {
@@ -16,7 +17,15 @@ export default class Experience
         this.time = new Time()
         this.resources = new Resources()
 
+        this.resources.on("ready", () => {
+            this.start();
+        })
+
+    }
+
+    start() {
         this.setConfig()
+        this.setControls()
         this.setDebug()
 
         this.setRenderer()
@@ -46,10 +55,10 @@ export default class Experience
             alpha: true,
             powerPreference: 'high-performance'
         })
-        this.renderer.setClearColor(0x000000, 1)
+        this.renderer.setClearColor("white", 1)
         this.renderer.setPixelRatio(2)
         this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
-        this.renderer.autoClear = false
+        this.renderer.autoClear = true
 
         this.sizes.on('resize', () =>
         {
@@ -62,6 +71,10 @@ export default class Experience
         })
     }
 
+    setControls() {
+        this.controls = new Controls()
+    }
+
     setCamera() {
         this.camera = new Camera({
             time: this.time,
@@ -69,19 +82,13 @@ export default class Experience
             renderer: this.renderer,
             debug: this.debug,
             config: this.config,
-            canvas: this.canvas
+            canvas: this.canvas,
+            controls: this.controls,
+            ressources: this.resources,
+            scene: this.scene
         })
 
         this.scene.add(this.camera.container)
-
-        this.time.on('tick', () =>
-        {
-            if(this.world && this.world.buzz)
-            {
-                // this.camera.target.x = this.world.buzz.position.x
-                // this.camera.target.y = this.world.buzz.position.y
-            }
-        })
     }
 
     setWorld() {
@@ -94,10 +101,9 @@ export default class Experience
             debug: this.debug,
             time: this.time,
             sizes: this.sizes,
+            controls: this.controls
         })
 
         this.scene.add(this.world.container)
     }
-
-
 }

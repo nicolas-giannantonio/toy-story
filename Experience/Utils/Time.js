@@ -5,25 +5,27 @@ export default class Time extends EventEmitter {
         super();
 
         this.start = Date.now();
-        this.current = this.start;
-        this.elapsed = 0;
         this.delta = 16;
 
-        window.requestAnimationFrame(() => {
-            this.tick()
-        })
+        this._RAF();
     }
 
-    tick() {
-        const currentTime = Date.now();
-        this.delta = currentTime - this.current;
-        this.elapsed = currentTime - this.start;
+    _RAF() {
+        requestAnimationFrame((t) => {
+            if (this._previousRAF === null) {
+                this._previousRAF = t;
+            }
 
-        this.trigger('tick')
+            this._RAF();
 
-        window.requestAnimationFrame(() => {
-            this.tick(this.delta)
-        })
+            this.step(t - this._previousRAF);
+            this._previousRAF = t;
+        });
+    }
+
+    step(time) {
+        const timeElapsedS = time * 0.001;
+        this.trigger('tick', [timeElapsedS])
     }
 
 }

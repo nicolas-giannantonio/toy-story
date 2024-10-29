@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 
 import Buzz from "./Buzz.js";
-import {AmbientLight} from "three";
+import Floor from "./Floor.js";
+import {AmbientLight, DirectionalLight} from "three";
 import Room from "./Room.js";
-import Controls from "./Controls.js";
-import Objects from "./Objects.js";
 import Physics from "./Physics.js";
 
 export default class World {
@@ -18,49 +17,37 @@ export default class World {
         this.debug = _options.debug
         this.time = _options.time
         this.sizes = _options.sizes
+        this.controls = _options.controls
 
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
 
         this.setAxes()
-        this.setControls()
 
-        this.ambientLight = new AmbientLight("white", 1)
+        this.ambientLight = new AmbientLight("white", .75)
         this.scene.add(this.ambientLight)
+
+        this.directionalLight = new DirectionalLight("orange", 1)
+        this.directionalLight.position.set(10, 10, 10)
+        this.scene.add(this.directionalLight)
+
+
+        this.setBuzz()
+        this.setFloor()
+        // this.setRoom()
 
         this.init();
     }
 
-    start() {
-        this.buzz.init();
-        this.room.init();
-
-        // this.camera.pan.enable()
-    }
-
     init() {
-        this.setBuzz()
-        this.setRoom()
-
-        this.ressources.on("ready", () => {
-            this.start();
-        })
+        // this.room.init();
+        this.floor.init();
     }
 
     setAxes()
     {
-        this.axis = new THREE.AxesHelper()
+        this.axis = new THREE.AxesHelper(150)
         this.container.add(this.axis)
-    }
-
-    setControls()
-    {
-        this.controls = new Controls({
-            config: this.config,
-            sizes: this.sizes,
-            time: this.time,
-            camera: this.camera,
-        })
     }
 
     setPhysics()
@@ -77,22 +64,12 @@ export default class World {
         this.container.add(this.physics.models.container)
     }
 
-    // setObjects()
-    // {
-    //     this.objects = new Objects({
-    //         time: this.time,
-    //         resources: this.ressources,
-    //         materials: this.materials,
-    //         physics: this.physics,
-    //         // debug: this.debugFolder
-    //     })
-    //     this.container.add(this.objects.container)
-    // }
-
-    // 3D
-
     setRoom() {
-        this.room = new Room()
+        this.room = new Room({
+            ressources: this.ressources,
+        })
+
+        this.container.add(this.room.container)
     }
 
     setBuzz() {
@@ -108,4 +85,13 @@ export default class World {
 
         this.container.add(this.buzz.container)
     }
+
+    setFloor() {
+        this.floor = new Floor({
+            scene: this.scene,
+        })
+
+        this.container.add(this.floor.container)
+    }
 }
+
