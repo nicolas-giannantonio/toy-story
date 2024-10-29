@@ -93,7 +93,8 @@ export default class Experience
             canvas: this.canvas,
             controls: this.controls,
             ressources: this.resources,
-            scene: this.scene
+            scene: this.scene,
+            player: this.player
         })
 
         this.scene.add(this.camera.container)

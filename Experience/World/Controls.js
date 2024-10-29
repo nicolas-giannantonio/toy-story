@@ -19,6 +19,7 @@ export default class Controls extends EventEmitter
         this.actions.left = false
         this.actions.brake = false
         this.actions.boost = false
+        this.actions.jump = false
 
         document.addEventListener('visibilitychange', () =>
         {
@@ -30,6 +31,7 @@ export default class Controls extends EventEmitter
                 this.actions.left = false
                 this.actions.brake = false
                 this.actions.boost = false
+                this.actions.jump = false
             }
         })
     }
@@ -65,16 +67,14 @@ export default class Controls extends EventEmitter
 
                 case 'ControlLeft':
                 case 'ControlRight':
-                case 'Space':
-                    this.actions.brake = true
-                    break
+
 
                 case 'ShiftLeft':
                 case 'ShiftRight':
                     this.actions.boost = true
                     break
 
-                case ' ':
+                case 'Space':
                     this.jump(true)
                     break
             }
@@ -126,6 +126,6 @@ export default class Controls extends EventEmitter
     }
 
     jump(_value) {
-        console.log('jump', _value)
+        this.actions.jump = _value
     }
 }

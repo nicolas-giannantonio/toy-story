@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BuzzControler } from './World/Buzz'
+import * as CANNON from "cannon";
 
 export default class Camera
 {
@@ -14,6 +15,7 @@ export default class Camera
         this.controls = _options.controls
         this.ressources = _options.ressources
         this.scene = _options.scene
+        this.player = _options.player
 
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
@@ -29,8 +31,32 @@ export default class Camera
             this.debugFolder.open()
         }
 
+        this.setPhysics()
         this.setInstance()
         this.setOrbitControls()
+    }
+
+
+    setPhysics() {
+        this.physicsWorld = new CANNON.World();
+        this.physicsWorld.gravity.set(0, -9.82, 0);
+
+        this.physicsWorld.solver.iterations = 10;
+        this.physicsWorld.solver.tolerance = 0.1;
+
+        this.defaultMaterial = new CANNON.Material('default');
+        this.physicsWorld.defaultMaterial = this.defaultMaterial;
+
+        const defaultContactMaterial = new CANNON.ContactMaterial(
+            this.defaultMaterial,
+            this.defaultMaterial,
+            {
+                friction: 0,
+                restitution: 0,
+            }
+        );
+
+        this.physicsWorld.addContactMaterial(defaultContactMaterial);
     }
 
     setInstance()
@@ -46,9 +72,11 @@ export default class Camera
         this.buzzControler = new BuzzControler({
             controls: this.controls,
             scene: this.scene,
-            ressources: this.ressources
+            ressources: this.ressources,
+            player: this.player,
+            physicsWorld: this.physicsWorld
         })
-        
+
         this.thirdPersonCamera = new ThirdPersonCamera({
             camera: this.instance,
             target: this.buzzControler,
@@ -57,8 +85,6 @@ export default class Camera
 
         this.container.add(this.instance)
 
-        console.log(this.container)
-
         this.sizes.on('resize', () =>
         {
             this.instance.aspect = this.sizes.viewport.width / this.sizes.viewport.height
@@ -66,6 +92,8 @@ export default class Camera
         })
 
         this.time.on('tick', (time) => {
+            this.physicsWorld.step(1 / 60, time, 3);
+
             this.buzzControler.update(time)
             this.thirdPersonCamera.update(time)
         })
