@@ -22,21 +22,16 @@ export default class Room {
     }
 
     collision() {
-        // console.log(this.elements)
         this.elements.forEach((mesh) => {
-
             if(mesh.name === 'Luxo_BallMain_Ctrl') {
                 mesh.tag = 'item';
             }
-
             if(mesh.name === 'Globe_Grp') {
                 mesh.tag = 'item';
             }
-
             if(mesh.name === 'Army_Men_Bucket') {
                 mesh.tag = 'item';
             }
-
         })
 
         this.items();
