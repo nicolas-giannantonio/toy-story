@@ -60,7 +60,7 @@ export default class Room {
         const army_Men_Bucket = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Sphere(4),
-            position: new CANNON.Vec3(55, 52.5, -23.5),
+            position: new CANNON.Vec3(55, 42.5, -23.5),
         })
         army_Men_Bucket.tag = 'item';
         army_Men_Bucket.name = 'Army_Men_Bucket';
@@ -172,7 +172,7 @@ export default class Room {
         const body = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Box(new CANNON.Vec3(
-                8,
+                12,
                 12,
                 8
             )),
@@ -214,9 +214,9 @@ export default class Room {
         const body = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Box(new CANNON.Vec3(
-                5,
+                4,
                 17.5,
-                10
+                15
             )),
             position: new CANNON.Vec3(52, 15, 47.5),
             material: this.physicsWorld.defaultMaterial,
@@ -242,8 +242,8 @@ export default class Room {
         const body = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Box(new CANNON.Vec3(
-                3,
-                    .5,
+                5,
+                .5,
                 14
             )),
             material: this.physicsWorld.defaultMaterial,

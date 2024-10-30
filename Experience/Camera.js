@@ -60,7 +60,7 @@ export default class Camera
         );
 
         this.physicsWorld.addContactMaterial(defaultContactMaterial);
-        // this.HELPER = new CannonDebugger( this.scene, this.physicsWorld );
+        this.HELPER = new CannonDebugger( this.scene, this.physicsWorld );
     }
 
     setInstance()
@@ -97,7 +97,7 @@ export default class Camera
 
         this.time.on('tick', (time) => {
             this.physicsWorld.step(1 / 60, time, 3);
-            // this.HELPER.update();
+            this.HELPER.update();
 
             this.buzzControler.update(time)
             this.thirdPersonCamera.update(time)

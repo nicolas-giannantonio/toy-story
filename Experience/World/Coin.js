@@ -20,7 +20,7 @@ export default class Coin {
 
         this.cube.position.set(8.5, 2.5, 8.5);
 
-        this.scene.add(this.cube);
+        // this.scene.add(this.cube);
 
         const shape = new CANNON.Box(new CANNON.Vec3(2.5, 2.5, 5));
         this.body = new CANNON.Body({
@@ -33,7 +33,7 @@ export default class Coin {
         // this.body.name = 'coin';
         // this.body.tag = 'item';
 
-        this.physicsWorld.addBody(this.body);
+        // this.physicsWorld.addBody(this.body);
     }
 
     update() {
