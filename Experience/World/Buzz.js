@@ -1,107 +1,1 @@
-import * as THREE from 'three';
-import { Mesh } from 'three';
-import * as CANNON from 'cannon';
-
-export class BuzzControler {
-    constructor(_options) {
-        this.controls = _options.controls;
-        this.ressources = _options.ressources;
-        this.scene = _options.scene;
-        this.physicsWorld = _options.physicsWorld;
-
-        this.init();
-    }
-
-    init() {
-        this._acceleration = new THREE.Vector3(1, 0.25, 10.0);
-        this._position = new THREE.Vector3();
-
-        const shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
-        this.body = new CANNON.Body({
-            mass: 50,
-            position: new CANNON.Vec3(0, 5, 0),
-            shape: shape,
-            material: this.physicsWorld.defaultMaterial,
-            fixedRotation: false,
-        });
-        this.physicsWorld.addBody(this.body);
-
-        this._target = new Mesh(
-            new THREE.BoxGeometry(0.1, 0.1, 0.1),
-            new THREE.MeshBasicMaterial({ color: "red" })
-        );
-        this._target.position.y = 0.5;
-        this._target.scale.setScalar(30);
-
-        this.scene.add(this._target);
-    }
-
-    get position() {
-        return this._position;
-    }
-
-    get rotation() {
-        if (!this._target) {
-            return new THREE.Quaternion();
-        }
-        return this._target.quaternion;
-    }
-
-    update(timeInSeconds) {
-        const controlObject = this._target;
-        const _Q = new THREE.Quaternion();
-        const _A = new THREE.Vector3();
-        const _R = controlObject.quaternion.clone();
-
-        const acc = this._acceleration.clone();
-
-        if (this.controls.actions.left) {
-            _A.set(0, 1, 0);
-            _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * acc.y);
-            _R.multiply(_Q);
-        }
-        if (this.controls.actions.right) {
-            _A.set(0, 1, 0);
-            _Q.setFromAxisAngle(_A, -4.0 * Math.PI * timeInSeconds * acc.y);
-            _R.multiply(_Q);
-        }
-
-        controlObject.quaternion.copy(_R);
-
-        const forward = new THREE.Vector3(0, 0, 1);
-        forward.applyQuaternion(controlObject.quaternion);
-        forward.normalize();
-
-        const sideways = new THREE.Vector3(1, 0, 0);
-        sideways.applyQuaternion(controlObject.quaternion);
-        sideways.normalize();
-
-        if (this.controls.actions.up) {
-            const force = forward.clone().multiplyScalar(acc.z * (this.controls.actions.boost ? 5 : 1));
-            this.body.velocity.x += force.x * timeInSeconds;
-            this.body.velocity.z += force.z * timeInSeconds;
-        }
-
-        if (this.controls.actions.down) {
-            const force = forward.clone().multiplyScalar(-acc.z);
-            this.body.velocity.x += force.x * timeInSeconds;
-            this.body.velocity.z += force.z * timeInSeconds;
-        }
-
-        if (!this.controls.actions.up && !this.controls.actions.down) {
-            this.body.velocity.x *= Math.pow(0.9, timeInSeconds);
-            this.body.velocity.z *= Math.pow(0.9, timeInSeconds);
-        }
-
-        if (this.controls.actions.jump) {
-
-            if (Math.abs(this.body.velocity.y) < 0.1) {
-                this.body.velocity.y = 10;
-            }
-            this.controls.actions.jump = false;
-        }
-
-        controlObject.position.copy(this.body.position);
-        this._position.copy(controlObject.position);
-    }
-}
+import * as THREE from 'three';import * as CANNON from 'cannon';export class BuzzControler {    constructor(_options) {        this.controls = _options.controls;        this.ressources = _options.ressources;        this.scene = _options.scene;        this.physicsWorld = _options.physicsWorld;        this.player = _options.player;        this.init();    }    init() {        this._acceleration = new THREE.Vector3(1, .15, 60.0);        this._position = new THREE.Vector3();        const shape = new CANNON.Box(new CANNON.Vec3(1, 1, .1));        // console.log(shape)        this.body = new CANNON.Body({            mass: 50,            position: new CANNON.Vec3(0, 4, 0),            shape: shape,            material: this.physicsWorld.defaultMaterial,            fixedRotation: true,            name: "buzz",            type: CANNON.Body.DYNAMIC,        });        this.body.quaternion.setFromEuler(Math.PI / 2, 0, 0);        this.body.name = "buzz";        this.body.addEventListener('collide', this.buzzCollision.bind(this));        this.physicsWorld.addBody(this.body);        this._target = this.ressources.items.buzz.scene.children[0]        // Anims        this.mixer = new THREE.AnimationMixer(this._target);        this.run = this.ressources.items.buzz.animations[5];        this.clips = this.ressources.items.buzz.animations;        this.jump = this.ressources.items.buzz.animations[0];        this.boost = this.ressources.items.buzz.animations[2];        this.pose = this.ressources.items.buzz.animations[1];        this._target.castShadow = true;        this._target.receiveShadow = true;        this._target.scale.setScalar(30);        this._target.position.copy(this.body.position);        this.scene.add(this._target);    }    get position() {        return this._position;    }    get rotation() {        if (!this._target) {            return new THREE.Quaternion();        }        return this._target.quaternion;    }    update(timeInSeconds) {        const controlObject = this._target;        const _Q = new THREE.Quaternion();        const _A = new THREE.Vector3();        const _R = controlObject.quaternion.clone();        const acc = this._acceleration.clone();        if (this.controls.actions.left) {            _A.set(0, 1, 0);            _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * acc.y);            _R.multiply(_Q);        }        if (this.controls.actions.right) {            _A.set(0, 1, 0);            _Q.setFromAxisAngle(_A, -4.0 * Math.PI * timeInSeconds * acc.y);            _R.multiply(_Q);        }        controlObject.quaternion.copy(_R);        const forward = new THREE.Vector3(0, 0, .1);        forward.applyQuaternion(controlObject.quaternion);        forward.normalize();        const sideways = new THREE.Vector3(1, 0, 0);        sideways.applyQuaternion(controlObject.quaternion);        sideways.normalize();        if (this.controls.actions.up) {            const force = forward.clone().multiplyScalar(acc.z * (this.controls.actions.boost ? 2 : 1));            this.body.velocity.x += force.x * timeInSeconds;            this.body.velocity.z += force.z * timeInSeconds;        }        if (this.controls.actions.down) {            const force = forward.clone().multiplyScalar(-acc.z);            this.body.velocity.x += force.x * timeInSeconds;            this.body.velocity.z += force.z * timeInSeconds;        }        if (!this.controls.actions.up && !this.controls.actions.down) {            this.body.velocity.x *= Math.pow(0.1, timeInSeconds);            this.body.velocity.z *= Math.pow(0.1, timeInSeconds);        }        if (this.controls.actions.jump) {            if (Math.abs(this.body.velocity.y) < 0.1) {                this.body.velocity.y = 75;            }            this.controls.actions.jump = false;        }        this.runAnimation(timeInSeconds)        controlObject.position.copy(this.body.position);        this._position.copy(controlObject.position);    }    runAnimation(t) {        if (this.controls.actions.down || this.controls.actions.up) {            this.mixer.clipAction(this.pose).stop();            this.mixer.clipAction(this.boost).stop();            this.mixer.clipAction(this.run).play();        }        else if (this.controls.actions.boost) {            this.mixer.clipAction(this.pose).stop();            this.mixer.clipAction(this.run).stop();            this.mixer.clipAction(this.boost).play();        }        else {            this.mixer.clipAction(this.run).stop();            this.mixer.clipAction(this.boost).stop();            this.mixer.clipAction(this.pose).play();        }        this.mixer.update(t);    }    buzzCollision(e) {        const tag = e.body.tag;        const id = e.body.name;        if(tag === "item") {            this.player.addItem({                id: id,                mesh: e.body,            });        }    }}

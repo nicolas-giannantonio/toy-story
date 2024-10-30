@@ -14,19 +14,13 @@ export default class Experience
     constructor(canvas) {
         this.canvas = canvas;
 
-
         this.sizes = new Sizes()
         this.time = new Time()
         this.resources = new Resources()
 
-        this.player = new Player({
-            time: this.time
-        })
-
         this.resources.on("ready", () => {
             this.start();
         })
-
     }
 
     start() {
@@ -35,6 +29,12 @@ export default class Experience
         this.setDebug()
 
         this.setRenderer()
+
+        this.player = new Player({
+            time: this.time,
+            scene: this.scene
+        })
+
         this.setCamera()
 
         this.setWorld()
@@ -55,6 +55,7 @@ export default class Experience
 
     setRenderer() {
         this.scene = new THREE.Scene()
+        const cubeTextureLoader = new THREE.CubeTextureLoader()
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -67,6 +68,10 @@ export default class Experience
         this.renderer.autoClear = true
         this.renderer.shadowMap.enabled = true
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        // const loader = new RGBELoader()
+        // loader.load('/envi/lebombo_4k.exr', () => {
+        //     this.scene.environment = this.scene.background
+        // })
 
         this.sizes.on('resize', () =>
         {

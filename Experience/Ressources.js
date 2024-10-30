@@ -13,8 +13,8 @@ export default class Resources extends EventEmitter
         this.items = {}
 
         this.loader.load([
-            { name: 'buzz', source: '/models/Buzz/Buzz.glb' },
-            // { name: 'room', source: '/models/Room/toyStoryScene.glb' },
+            { name: 'buzz', source: '/models/Buzz/buzz.glb' },
+            { name: 'room', source: '/models/Room/toyStoryScene.glb' },
         ])
 
         this.loader.on('fileEnd', (_resource, _data) =>

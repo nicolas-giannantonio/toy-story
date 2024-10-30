@@ -1,7 +1,8 @@
 import * as THREE from 'three'
+import * as CANNON from "cannon";
+import CannonDebugger from 'cannon-es-debugger'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BuzzControler } from './World/Buzz'
-import * as CANNON from "cannon";
 
 export default class Camera
 {
@@ -39,10 +40,10 @@ export default class Camera
 
     setPhysics() {
         this.physicsWorld = new CANNON.World();
-        this.physicsWorld.gravity.set(0, -9.82, 0);
-
+        this.physicsWorld.gravity.set(0, -129.82, 0);
+        this.physicsWorld.broadphase = new CANNON.NaiveBroadphase();
         this.physicsWorld.solver.iterations = 10;
-        this.physicsWorld.solver.tolerance = 0.1;
+
 
         this.defaultMaterial = new CANNON.Material('default');
         this.physicsWorld.defaultMaterial = this.defaultMaterial;
@@ -52,11 +53,12 @@ export default class Camera
             this.defaultMaterial,
             {
                 friction: 0,
-                restitution: 0,
+                restitution: 0
             }
         );
 
         this.physicsWorld.addContactMaterial(defaultContactMaterial);
+        // this.HELPER = new CannonDebugger( this.scene, this.physicsWorld );
     }
 
     setInstance()
@@ -67,7 +69,7 @@ export default class Camera
         const far = 1000.0;
 
         this.instance = new THREE.PerspectiveCamera(fov, aspect, near, far)
-        this.instance.position.set(25, 10, 25);
+        this.instance.position.set(0, 10, 15);
 
         this.buzzControler = new BuzzControler({
             controls: this.controls,
@@ -93,6 +95,7 @@ export default class Camera
 
         this.time.on('tick', (time) => {
             this.physicsWorld.step(1 / 60, time, 3);
+            // this.HELPER.update();
 
             this.buzzControler.update(time)
             this.thirdPersonCamera.update(time)
@@ -118,7 +121,7 @@ class ThirdPersonCamera {
     }
 
     _CalculateIdealOffset() {
-        const idealOffset = new THREE.Vector3(0, 20, -40);
+        const idealOffset = new THREE.Vector3(0, 9, -10);
         idealOffset.applyQuaternion(this._params.target.rotation);
         idealOffset.add(this._params.target.position);
 
