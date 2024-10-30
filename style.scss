@@ -113,8 +113,19 @@ html
 
     .start__info {
       text-align: center;
-      font-family: 'Helvetica Now Display', sans-serif;
+      font-family: 'Inter', sans-serif;
       max-width: 25rem;
+    }
+
+    .start__commandes {
+      font-family: 'Inter', sans-serif;
+      margin-top: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+
+      li {
+        list-style: none;
+      }
     }
 
     .start__button {
