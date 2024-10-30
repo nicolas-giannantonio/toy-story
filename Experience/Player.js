@@ -19,12 +19,7 @@ export default class Player {
 
 
     resetGame() {
-        gsap.to(this.$w__start, {
-            opacity: 1,
-            duration: 1,
-            pointerEvents: 'all',
-            ease: 'power3.out',
-        })
+        window.location.reload();
     }
 
     startGame() {
@@ -62,6 +57,7 @@ export default class Player {
         this.scene.children.forEach((child) => {
             if (child.name === item.id) {
                 child.visible = false;
+                item.remove();
                 this.checkItem(item.id);
             }
 
@@ -70,6 +66,7 @@ export default class Player {
                 roomElements.forEach((mesh) => {
                     if (mesh.name === item.id) {
                         mesh.visible = false;
+                        item.remove();
                     }
                     this.checkItem(item.id);
                 });
@@ -77,8 +74,8 @@ export default class Player {
         });
 
         if(this.items.length === 3) {
-            clearInterval(this.timeInterval);
-            this.resetGame();
+            alert("Todo: Win screen");
+            setTimeout(() => this.resetGame(), 1000);
         }
     }
 

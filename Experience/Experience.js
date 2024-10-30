@@ -55,23 +55,19 @@ export default class Experience
 
     setRenderer() {
         this.scene = new THREE.Scene()
-        const cubeTextureLoader = new THREE.CubeTextureLoader()
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             alpha: true,
             powerPreference: 'high-performance'
         })
+
         this.renderer.setClearColor("black", 1)
         this.renderer.setPixelRatio(2)
         this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
         this.renderer.autoClear = true
         this.renderer.shadowMap.enabled = true
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-        // const loader = new RGBELoader()
-        // loader.load('/envi/lebombo_4k.exr', () => {
-        //     this.scene.environment = this.scene.background
-        // })
 
         this.sizes.on('resize', () =>
         {

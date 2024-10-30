@@ -38,12 +38,6 @@ export default class World {
         this.rectLight.lookAt( 0, 0, 0 );
 
 
-        this.debugFolder = this.debug.addFolder('light');
-        this.debugFolder.open();
-        this.debugFolder.add(this.rectLight.position, 'x').min(-10).max(100).step(0.01).name('directional x');
-        this.debugFolder.add(this.rectLight.position, 'y').min(-10).max(100).step(0.01).name('directional y');
-        this.debugFolder.add(this.rectLight.position, 'z').min(-10).max(100).step(0.01).name('directional z');
-
         this.scene.add(this.directionalLight, this.pointLight, this.rectLight);
 
         this.setFloor();

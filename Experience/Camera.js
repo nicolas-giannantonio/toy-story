@@ -42,7 +42,9 @@ export default class Camera
         this.physicsWorld = new CANNON.World();
         this.physicsWorld.gravity.set(0, -129.82, 0);
         this.physicsWorld.broadphase = new CANNON.NaiveBroadphase();
+
         this.physicsWorld.solver.iterations = 10;
+
 
 
         this.defaultMaterial = new CANNON.Material('default');
@@ -52,8 +54,8 @@ export default class Camera
             this.defaultMaterial,
             this.defaultMaterial,
             {
-                friction: 0,
-                restitution: 0
+                friction: 0.0,
+                restitution: 0.0
             }
         );
 
